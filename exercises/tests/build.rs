@@ -12,7 +12,7 @@ fn main() {
         .as_secs(); // What's the use of this timestamp here?
     let your_command = format!(
         // "Your command here with {}, please checkout exercises/tests/build.rs",
-        "rustc-env=TEST_FOO={} 123",
+        "rustc-env=TEST_FOO={}",
         timestamp
     );
     println!("cargo:{}", your_command);
@@ -21,6 +21,6 @@ fn main() {
     // In tests8, we should enable "pass" feature to make the
     // testcase return early. Fill in the command to tell
     // Cargo about that.
-    let your_command = "rustc-cfg=feature=\"pass\" 123";
+    let your_command = "rustc-cfg=feature=\"pass\"";
     println!("cargo:{}", your_command);
 }
