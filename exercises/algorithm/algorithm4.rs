@@ -3,7 +3,7 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
+
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -41,7 +41,7 @@ where
 
 impl<T> BinarySearchTree<T>
 where
-    T: Ord,
+    T: Ord + Clone,
 {
 
     fn new() -> Self {
@@ -50,23 +50,64 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        match &mut self.root {
+            Some(box_node) => {
+                box_node.insert(value.clone());
+            },
+            None => {
+                let node = TreeNode::new(value.clone());
+                self.root = Some(Box::new(node));
+            },
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        let mut ptr = &self.root;
+        loop {
+            match ptr {
+                Some(box_node) => {
+                    match box_node.value.cmp(&value) {
+                        Ordering::Equal => return true,
+                        Ordering::Less => ptr = &box_node.right,
+                        Ordering::Greater => ptr = &box_node.left,
+                    }
+                },
+                None => return false
+            }
+        }
     }
 }
 
 impl<T> TreeNode<T>
 where
-    T: Ord,
+    T: Ord + Clone,
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        if self.value > value {
+            match &mut self.left {
+                Some(box_node) => {
+                    box_node.insert(value.clone());
+                },
+                None => {
+                    let node = TreeNode::new(value.clone());
+                    self.left = Some(Box::new(node));
+                }
+            }
+        };
+        if self.value < value {
+            match &mut self.right {
+                Some(box_node) => {
+                    box_node.insert(value.clone());
+                },
+                None => {
+                    let node = TreeNode::new(value.clone());
+                    self.right = Some(Box::new(node));
+                }
+            }
+        }
     }
 }
 

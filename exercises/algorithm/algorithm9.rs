@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +38,19 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+
+        let mut c_idx = self.count; 
+        while c_idx > 1 {
+            let p_idx = self.parent_idx(c_idx);
+            if (self.comparator)(&self.items[c_idx], &self.items[p_idx]) {
+                self.items.swap(c_idx, p_idx);
+                c_idx = p_idx;
+            } else {
+                break
+            }
+        } 
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +70,21 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if left > self.count && right > self.count {
+            idx
+        } else if left > self.count {
+            right
+        } else if right > self.count {
+            left
+        } else {
+            if (self.comparator)(&self.items[left], &self.items[right]) {
+                left
+            } else {
+                right
+            }
+        }
     }
 }
 
@@ -84,8 +110,25 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        //consider this next is a delete operation
+        //which always delete the root node
+        if self.count == 0 {
+            return None
+        }
+		self.items.swap(1, self.count);
+        let result = self.items.remove(self.count);
+        self.count -= 1;
+        let mut p_idx = 1;
+        while self.children_present(p_idx) {
+            let c_idx = self.smallest_child_idx(p_idx);
+            if (self.comparator)(&self.items[c_idx], &self.items[p_idx]) {
+                self.items.swap(p_idx, c_idx);
+                p_idx = c_idx;
+            } else {
+                break;
+            }
+        }
+        Some(result)
     }
 }
 

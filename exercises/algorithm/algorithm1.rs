@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -70,12 +70,45 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+    where
+        T: std::cmp::PartialOrd + Copy
 	{
 		//TODO
-		Self {
+		let mut new_linked_list = Self {
             length: 0,
             start: None,
             end: None,
+        };
+        let mut p1 = list_a.start;
+        let mut p2 = list_b.start;
+        // Safety: n1_ptr and n2_ptr are NonNull with raw pointer
+        loop {
+            match (p1, p2) {
+                (None, None) => return new_linked_list,
+                (Some(n1_ptr), None) => {
+                    let node = unsafe { &*n1_ptr.as_ptr() };
+                    new_linked_list.add(node.val);
+                    p1 = node.next;
+                },
+                (None, Some(n2_ptr)) => {
+                    let node = unsafe { &*n2_ptr.as_ptr() };
+                    new_linked_list.add(node.val);
+                    p2 = node.next;
+                },
+                (Some(n1_ptr), Some(n2_ptr)) => {
+                    let node1 = unsafe { &*n1_ptr.as_ptr() };
+                    let node2 = unsafe { &*n2_ptr.as_ptr() };
+                    unsafe {
+                        if node1.val <= node2.val {
+                            new_linked_list.add(node1.val);
+                            p1 = node1.next;
+                        } else {
+                            new_linked_list.add(node2.val);
+                            p2 = node2.next;
+                        }
+                    }
+                }
+            }
         }
 	}
 }
